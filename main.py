@@ -80,3 +80,19 @@ def protected_profile(auth_data: dict = Depends(verify_token)):
         "email": user.email,
         "created_at": user.created_at
     }
+    
+@app.get("/protected/dashboard")
+def protected_dashboard(auth_data: dict = Depends(verify_token)):
+    user = auth_data["user"]
+    return {
+        "message": f"Welcome to your dashboard, {user.email}"
+    }
+
+
+@app.post("/auth/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout(auth_data: dict = Depends(verify_token)):
+    token = auth_data["token"]
+    try:
+        supabase.auth.sign_out()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
