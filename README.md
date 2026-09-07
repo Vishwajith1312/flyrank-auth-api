@@ -49,7 +49,9 @@ The API will be available at `http://127.0.0.1:8002`, with interactive docs at `
 | GET | `/protected/dashboard` | Yes | Example protected route demonstrating token verification on a second endpoint. |
 | POST | `/auth/logout` | Yes | Signs the current user out via Supabase Auth and invalidates their session. Returns `204 No Content`. |
 
-**Authentication:** Protected routes expect an `Authorization: Bearer <token>` header, where `<token>` is the `access_token` returned by `/auth/login`. In Swagger UI, click **Authorize**, paste the token, and all protected routes become callable directly from `/docs`.
+## Authentication
+
+Protected routes expect an `Authorization: Bearer <token>` header, where `<token>` is the `access_token` returned by `/auth/login`. In Swagger UI, click **Authorize**, paste the token, and all protected routes become callable directly from `/docs`.
 
 ## Swagger UI
 
