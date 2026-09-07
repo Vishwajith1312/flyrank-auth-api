@@ -5,6 +5,7 @@ from supabase import create_client, Client
 from fastapi import HTTPException, status, Depends
 from fastapi import Request
 from fastapi.responses import JSONResponse
+from fastapi.security import HTTPBearer
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -13,6 +14,7 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = FastAPI()
+bearer_scheme = HTTPBearer()
 
 @app.on_event("startup")
 def startup_event():
@@ -73,7 +75,7 @@ def verify_token(request: Request):
 
 
 @app.get("/protected/profile")
-def protected_profile(auth_data: dict = Depends(verify_token)):
+def protected_profile(auth_data: dict = Depends(verify_token), _: str = Depends(bearer_scheme)):
     user = auth_data["user"]
     return {
         "id": user.id,
@@ -82,7 +84,7 @@ def protected_profile(auth_data: dict = Depends(verify_token)):
     }
     
 @app.get("/protected/dashboard")
-def protected_dashboard(auth_data: dict = Depends(verify_token)):
+def protected_dashboard(auth_data: dict = Depends(verify_token), _: str = Depends(bearer_scheme)):
     user = auth_data["user"]
     return {
         "message": f"Welcome to your dashboard, {user.email}"
@@ -90,7 +92,7 @@ def protected_dashboard(auth_data: dict = Depends(verify_token)):
 
 
 @app.post("/auth/logout", status_code=status.HTTP_204_NO_CONTENT)
-def logout(auth_data: dict = Depends(verify_token)):
+def logout(auth_data: dict = Depends(verify_token), _: str = Depends(bearer_scheme)):
     token = auth_data["token"]
     try:
         supabase.auth.sign_out()
